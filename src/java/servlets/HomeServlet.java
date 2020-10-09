@@ -1,12 +1,10 @@
 package servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
+import models.*;
 
 public class HomeServlet extends HttpServlet {
 
@@ -15,9 +13,12 @@ public class HomeServlet extends HttpServlet {
             throws ServletException, IOException 
     {
         HttpSession session = request.getSession();
-        if(session.isNew())
+        AccountService as = new AccountService();
+        User user = as.login(request.getParameter("username"), request.getParameter("password"));
+        
+        if(user == null || session.isNew())
         {
-            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            response.sendRedirect("login");
         }
         else
         {
