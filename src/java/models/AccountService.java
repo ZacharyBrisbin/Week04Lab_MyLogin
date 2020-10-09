@@ -8,7 +8,6 @@ public class AccountService
         {
             return new User(username, null);
         }
-
         return null;
     }
 }

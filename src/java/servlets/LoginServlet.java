@@ -21,19 +21,24 @@ public class LoginServlet extends HttpServlet {
     {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        
         AccountService as = new AccountService();
         User user = as.login(username, password);
         if(username == null || username.equals("") || password == null || password.equals("") && user != null)
         {
-            request.setAttribute("username", username);
-            request.setAttribute("password", password);
+            request.getSession().setAttribute("username", username);
+            request.getSession().setAttribute("password", password);
             request.setAttribute("error", true);
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
-        if(user == null)
+        else if(user == null)
         {
-            request.setAttribute("loginError", true);
+            request.getSession().setAttribute("username", username);
+            request.getSession().setAttribute("password", password);
+            request.getSession().setAttribute("loginError", true);
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
-        response.sendRedirect("home");
+            response.sendRedirect("home");
     }
 
 }
