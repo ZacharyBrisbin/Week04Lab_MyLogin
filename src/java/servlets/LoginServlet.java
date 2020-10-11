@@ -12,12 +12,30 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {
+        String username = (String)request.getSession().getAttribute("username");
+        String password = (String)request.getSession().getAttribute("password");
+        if(username == null || password == null)
+        {
+            username = "hello";
+            password = "there";
+        }
         String logout = request.getParameter("logout");
         if(logout != null)
         {
             request.setAttribute("logout", true);
+            request.getSession().invalidate();
         }
-        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        AccountService as = new AccountService();
+        User user = as.login(username, password);
+        
+        if(user == null)
+        {
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        }
+        else
+        {
+            response.sendRedirect("home");
+        }
         
     }
 
@@ -42,7 +60,7 @@ public class LoginServlet extends HttpServlet {
         {
             request.getSession();
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("password", password);
+            request.getSession().setAttribute("password", "");
             request.setAttribute("loginError", true);
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
             request.getSession().invalidate();
