@@ -12,7 +12,7 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {
-        HttpSession session = request.getSession();
+        
         String username = (String)request.getSession().getAttribute("username");
         String password = (String)request.getSession().getAttribute("password");
         if(username == null || password == null)
@@ -23,11 +23,15 @@ public class HomeServlet extends HttpServlet {
         AccountService as = new AccountService();
         User user = as.login(username, password);
         
-        if(user == null || session.isNew())
+        if(user == null)
+        {
             response.sendRedirect("login");
-
-        else 
+        }
+        else
+        {
             getServletContext().getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
+        }
+        
     }
 
     @Override
